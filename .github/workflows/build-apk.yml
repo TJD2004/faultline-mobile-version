@@ -42,8 +42,11 @@ jobs:
           cd android
           ./gradlew assembleRelease
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Create GitHub Release with APK
+        uses: softprops/action-gh-release@v2
         with:
-          name: app-release-apk
-          path: android/app/build/outputs/apk/release/app-release.apk
+          tag_name: apk-${{ github.run_number }}
+          name: APK Build ${{ github.run_number }}
+          files: android/app/build/outputs/apk/release/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
