@@ -7,27 +7,29 @@
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#0A0A0F",
+
     "splash": {
       "backgroundColor": "#0A0A0F"
     },
+
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.faultline.app"
     },
+
     "android": {
       "package": "com.faultline.app",
-      "icon": "./assets/icon.png",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0A0A0F"
-      },
-      "versionCode": 1
+      }
     },
+
     "extra": {
       "eas": {
         "projectId": "fc79d686-bf4b-4dd5-b498-9aa61d18cf8a"
       }
     },
+
     "owner": "td2004s-team"
   }
 }
