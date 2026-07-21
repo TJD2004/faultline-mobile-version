@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Faultline",
+    "slug": "faultline",
+    "scheme": "faultline",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0A0A0F",
+    "splash": {
+      "backgroundColor": "#0A0A0F"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.faultline.app"
+    },
+    "android": {
+      "package": "com.faultline.app",
+      "icon": "./assets/icon.png",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0A0F"
+      },
+      "versionCode": 1
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0e1a9a04-e574-48aa-a775-f245900ea71b"
+      }
+    }
+  }
+}
