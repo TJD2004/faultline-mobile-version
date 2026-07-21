@@ -25,8 +25,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "0e1a9a04-e574-48aa-a775-f245900ea71b"
+        "projectId": "fc79d686-bf4b-4dd5-b498-9aa61d18cf8a"
       }
-    }
+    },
+    "owner": "td2004s-team"
   }
 }
