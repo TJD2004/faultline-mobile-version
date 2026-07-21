@@ -18,10 +18,7 @@
     },
 
     "android": {
-      "package": "com.faultline.app",
-      "adaptiveIcon": {
-        "backgroundColor": "#0A0A0F"
-      }
+      "package": "com.faultline.app"
     },
 
     "extra": {
