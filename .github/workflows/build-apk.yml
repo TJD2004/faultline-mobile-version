@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 env:
-  GRADLE_OPTS: "-Dorg.gradle.daemon=true -Dorg.gradle.parallel=true -Dorg.gradle.caching=true -Dorg.gradle.jvmargs=-Xmx4g"
+  GRADLE_OPTS: -Dorg.gradle.daemon=true -Dorg.gradle.parallel=true -Dorg.gradle.caching=true -Dorg.gradle.jvmargs=-Xmx4g
 
 jobs:
   build:
@@ -22,17 +22,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-
-      # Node + npm cache
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
-
-      # Cache Expo, npm and Gradle
-      - name: Cache dependencies
+      - name: Cache npm and Gradle
         uses: actions/cache@v4
         with:
           path: |
@@ -41,30 +37,21 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
             android/.gradle
-          key: build-${{ runner.os }}-${{ hashFiles('package-lock.json', 'android/**/*.gradle*', 'android/**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ hashFiles('package-lock.json', 'android/**/*.gradle*', 'android/**/gradle-wrapper.properties') }}
           restore-keys: |
-            build-${{ runner.os }}-
-
+            ${{ runner.os }}-
 
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit --no-fund
 
-
-      # Create Expo environment file
-      - name: Create .env
+      - name: Verify .env exists
         run: |
-          echo "EXPO_PUBLIC_API_URL=${{ secrets.EXPO_PUBLIC_API_URL }}" > .env
-          echo "EXPO_PUBLIC_API_KEY=${{ secrets.EXPO_PUBLIC_API_KEY }}" >> .env
-
-
-      # Verify env values exist
-      - name: Verify environment
-        run: |
-          echo "------ .env ------"
-          cat .env
-          echo "------------------"
-          node -e "console.log('API URL:', process.env.EXPO_PUBLIC_API_URL)"
-
+          if [ -f .env ]; then
+            echo ".env found"
+            cat .env
+          else
+            echo ".env NOT found"
+          fi
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -73,22 +60,16 @@ jobs:
           java-version: 17
           cache: gradle
 
-
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-
-      # Generate Android project
       - name: Generate Android project
         run: npx expo prebuild --clean --no-install
-
 
       - name: Make gradlew executable
         run: chmod +x android/gradlew
 
-
-      # Gradle optimization
-      - name: Configure Gradle performance
+      - name: Configure Gradle
         run: |
           echo "org.gradle.daemon=true" >> android/gradle.properties
           echo "org.gradle.parallel=true" >> android/gradle.properties
@@ -96,27 +77,21 @@ jobs:
           echo "org.gradle.configureondemand=true" >> android/gradle.properties
           echo "org.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8" >> android/gradle.properties
 
-
-      # Build APK
       - name: Build Release APK
         working-directory: android
         run: |
           ./gradlew assembleRelease \
-          --parallel \
-          --build-cache \
-          --daemon \
-          --configure-on-demand
+            --parallel \
+            --build-cache \
+            --daemon \
+            --configure-on-demand
 
-
-      # Upload APK
-      - name: Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-release.apk
           path: android/app/build/outputs/apk/release/app-release.apk
 
-
-      # Create GitHub Release
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
