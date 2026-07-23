@@ -6,11 +6,18 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
-    "backgroundColor": "#0A0A0F",
+    "icon": "./assets/icon.png",
 
-    "splash": {
-      "backgroundColor": "#0A0A0F"
-    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 220,
+          "backgroundColor": "#0A0A0F"
+        }
+      ]
+    ],
 
     "ios": {
       "supportsTablet": false,
@@ -18,7 +25,11 @@
     },
 
     "android": {
-      "package": "com.faultline.app"
+      "package": "com.faultline.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0A0F"
+      }
     },
 
     "extra": {

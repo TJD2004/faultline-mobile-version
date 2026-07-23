@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { Award, Lock, CheckCircle2 } from "lucide-react-native";
 import api from "../api/axios";
-import { colors } from "../theme";
+import { useTheme } from "../context/ThemeContext";
 import Card from "../components/Card";
 
 export default function AchievementsScreen() {
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => getStyles(colors), [colors]);
   const [achievements, setAchievements] = useState(null);
 
   useEffect(() => {
@@ -50,16 +52,17 @@ export default function AchievementsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.void },
-  title: { color: colors.text, fontSize: 20, fontWeight: "700" },
-  subtitle: { color: colors.muted, fontSize: 12, marginTop: 2 },
-  card: { flex: 1 },
-  cardTop: { flexDirection: "row", justifyContent: "space-between", marginBottom: 8 },
-  iconBox: { width: 32, height: 32, borderRadius: 10, backgroundColor: colors.surface2, alignItems: "center", justifyContent: "center" },
-  cardTitle: { color: colors.text, fontSize: 12, fontWeight: "700", marginBottom: 2 },
-  cardDesc: { color: colors.muted, fontSize: 10, marginBottom: 8 },
-  progressTrack: { height: 5, borderRadius: 3, backgroundColor: colors.surface2, overflow: "hidden" },
-  progressFill: { height: 5, borderRadius: 3, backgroundColor: colors.violet },
-  progressText: { color: "#5C5C70", fontSize: 9, marginTop: 4, fontFamily: "Courier" },
-});
+const getStyles = (colors) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.void },
+    title: { color: colors.text, fontSize: 20, fontWeight: "700" },
+    subtitle: { color: colors.muted, fontSize: 12, marginTop: 2 },
+    card: { flex: 1 },
+    cardTop: { flexDirection: "row", justifyContent: "space-between", marginBottom: 8 },
+    iconBox: { width: 32, height: 32, borderRadius: 10, backgroundColor: colors.surface2, alignItems: "center", justifyContent: "center" },
+    cardTitle: { color: colors.text, fontSize: 12, fontWeight: "700", marginBottom: 2 },
+    cardDesc: { color: colors.muted, fontSize: 10, marginBottom: 8 },
+    progressTrack: { height: 5, borderRadius: 3, backgroundColor: colors.surface2, overflow: "hidden" },
+    progressFill: { height: 5, borderRadius: 3, backgroundColor: colors.violet },
+    progressText: { color: colors.muted, fontSize: 9, marginTop: 4, fontFamily: "Courier" },
+  });

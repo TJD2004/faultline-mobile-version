@@ -3,10 +3,12 @@ import { View, Text, FlatList, StyleSheet } from "react-native";
 import { Crown } from "lucide-react-native";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
-import { colors } from "../theme";
+import { useTheme } from "../context/ThemeContext";
 
 export default function ContestRankingScreen() {
   const { user } = useAuth();
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => getStyles(colors), [colors]);
   const [ranking, setRanking] = useState(null);
 
   useEffect(() => {
@@ -45,16 +47,17 @@ export default function ContestRankingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.void },
-  title: { color: colors.text, fontSize: 20, fontWeight: "700" },
-  subtitle: { color: colors.muted, fontSize: 12, marginTop: 2 },
-  muted: { color: colors.muted, fontSize: 13, padding: 16 },
-  row: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: colors.border },
-  rowMe: { backgroundColor: `${colors.violet}14` },
-  rankBox: { width: 24, alignItems: "center" },
-  rankText: { color: colors.muted, fontSize: 13, fontFamily: "Courier" },
-  name: { color: colors.text, fontSize: 13, fontWeight: "500" },
-  subName: { color: colors.muted, fontSize: 11, marginTop: 1 },
-  xp: { color: colors.text, fontSize: 12, fontFamily: "Courier" },
-});
+const getStyles = (colors) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.void },
+    title: { color: colors.text, fontSize: 20, fontWeight: "700" },
+    subtitle: { color: colors.muted, fontSize: 12, marginTop: 2 },
+    muted: { color: colors.muted, fontSize: 13, padding: 16 },
+    row: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: colors.border },
+    rowMe: { backgroundColor: `${colors.violet}14` },
+    rankBox: { width: 24, alignItems: "center" },
+    rankText: { color: colors.muted, fontSize: 13, fontFamily: "Courier" },
+    name: { color: colors.text, fontSize: 13, fontWeight: "500" },
+    subName: { color: colors.muted, fontSize: 11, marginTop: 1 },
+    xp: { color: colors.text, fontSize: 12, fontFamily: "Courier" },
+  });

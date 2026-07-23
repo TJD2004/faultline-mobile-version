@@ -22,14 +22,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-
       # Node + npm cache
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-
 
       # Cache Expo, npm and Gradle
       - name: Cache dependencies
@@ -45,16 +43,13 @@ jobs:
           restore-keys: |
             build-${{ runner.os }}-
 
-
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit --no-fund
-
 
       # Create Expo environment file
       - name: Create .env
         run: |
           echo "EXPO_PUBLIC_API_URL=${{ secrets.EXPO_PUBLIC_API_URL }}" > .env
-
 
       # Verify env values exist
       - name: Verify environment
@@ -64,7 +59,6 @@ jobs:
           echo "------------------"
           node -e "console.log('API URL:', process.env.EXPO_PUBLIC_API_URL)"
 
-
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -72,19 +66,15 @@ jobs:
           java-version: 17
           cache: gradle
 
-
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-
 
       # Generate Android project
       - name: Generate Android project
         run: npx expo prebuild --clean --no-install
 
-
       - name: Make gradlew executable
         run: chmod +x android/gradlew
-
 
       # Gradle optimization
       - name: Configure Gradle performance
@@ -94,7 +84,6 @@ jobs:
           echo "org.gradle.caching=true" >> android/gradle.properties
           echo "org.gradle.configureondemand=true" >> android/gradle.properties
           echo "org.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8" >> android/gradle.properties
-
 
       # Build APK
       - name: Build Release APK
@@ -106,14 +95,12 @@ jobs:
           --daemon \
           --configure-on-demand
 
-
-      # Upload APK
+      # Upload APK Artifact
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release.apk
           path: android/app/build/outputs/apk/release/app-release.apk
-
 
       # Create GitHub Release
       - name: Create GitHub Release

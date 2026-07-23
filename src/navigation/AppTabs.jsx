@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { LayoutDashboard, Code2, Calendar, Trophy, User, MoreHorizontal } from "lucide-react-native";
-import { colors } from "../theme";
+import { useTheme } from "../context/ThemeContext";
 
 import DashboardScreen from "../screens/DashboardScreen";
 import PracticeScreen from "../screens/PracticeScreen";
@@ -13,17 +13,22 @@ import MoreScreen from "../screens/MoreScreen";
 const Tab = createBottomTabNavigator();
 
 export default function AppTabs() {
+  const { colors } = useTheme();
+
+  const screenOptions = useMemo(
+    () => ({
+      headerStyle: { backgroundColor: colors.void },
+      headerTintColor: colors.text,
+      headerShadowVisible: false,
+      tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
+      tabBarActiveTintColor: colors.violet,
+      tabBarInactiveTintColor: colors.muted,
+    }),
+    [colors]
+  );
+
   return (
-    <Tab.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: colors.void },
-        headerTintColor: colors.text,
-        headerShadowVisible: false,
-        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
-        tabBarActiveTintColor: colors.violet,
-        tabBarInactiveTintColor: colors.muted,
-      }}
-    >
+    <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
         name="Dashboard"
         component={DashboardScreen}

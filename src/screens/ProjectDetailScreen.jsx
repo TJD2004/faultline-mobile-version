@@ -3,7 +3,8 @@ import { View, Text, TextInput, ScrollView, StyleSheet, Pressable, ActivityIndic
 import { Play, Send, RotateCcw, Trophy, CheckCircle2, AlertTriangle } from "lucide-react-native";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
-import { colors } from "../theme";
+import { useTheme } from "../context/ThemeContext";
+import { editorColors } from "../theme";
 import Card from "../components/Card";
 import Pill from "../components/Pill";
 import PrimaryButton from "../components/PrimaryButton";
@@ -11,6 +12,8 @@ import PrimaryButton from "../components/PrimaryButton";
 export default function ProjectDetailScreen({ route }) {
   const { slug } = route.params;
   const { setUser } = useAuth();
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => getStyles(colors), [colors]);
 
   const [project, setProject] = useState(null);
   const [fileList, setFileList] = useState([]);
@@ -140,38 +143,40 @@ export default function ProjectDetailScreen({ route }) {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.void },
-  pillRow: { flexDirection: "row", gap: 8, marginBottom: 8 },
-  title: { color: colors.text, fontSize: 18, fontWeight: "700", marginBottom: 12 },
-  bodyText: { color: colors.muted, fontSize: 12, lineHeight: 18 },
-  fileTab: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, backgroundColor: colors.surface2, borderWidth: 1, borderColor: colors.border, marginRight: 8 },
-  fileTabActive: { backgroundColor: colors.border },
-  fileTabText: { color: colors.muted, fontSize: 11, fontFamily: "Courier" },
-  fileTabTextActive: { color: colors.text },
-  editor: {
-    backgroundColor: colors.void,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 10,
-    padding: 12,
-    color: "#D6D6E6",
-    fontFamily: "Courier",
-    fontSize: 12.5,
-    minHeight: 240,
-    textAlignVertical: "top",
-    marginBottom: 12,
-  },
-  actionRow: { flexDirection: "row", gap: 8, marginBottom: 10 },
-  statusRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 10 },
-  statusText: { fontSize: 11, fontFamily: "Courier" },
-  terminal: { minHeight: 90 },
-  terminalPlaceholder: { color: "#5C5C70", fontSize: 12, fontFamily: "Courier" },
-  terminalLine: { fontSize: 12, fontFamily: "Courier", marginBottom: 4 },
-  rewardHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 },
-  rewardTitle: { color: colors.text, fontSize: 14, fontWeight: "600" },
-  rewardRow: { flexDirection: "row", justifyContent: "space-around" },
-  rewardStat: { alignItems: "center" },
-  rewardValue: { fontSize: 18, fontWeight: "700" },
-  rewardLabel: { color: colors.muted, fontSize: 10, marginTop: 2 },
-});
+const getStyles = (colors) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.void },
+    pillRow: { flexDirection: "row", gap: 8, marginBottom: 8 },
+    title: { color: colors.text, fontSize: 18, fontWeight: "700", marginBottom: 12 },
+    bodyText: { color: colors.muted, fontSize: 12, lineHeight: 18 },
+    fileTab: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, backgroundColor: colors.surface2, borderWidth: 1, borderColor: colors.border, marginRight: 8 },
+    fileTabActive: { backgroundColor: colors.border },
+    fileTabText: { color: colors.muted, fontSize: 11, fontFamily: "Courier" },
+    fileTabTextActive: { color: colors.text },
+    // Editor pane always stays dark for code readability, independent of app theme.
+    editor: {
+      backgroundColor: editorColors.background,
+      borderWidth: 1,
+      borderColor: editorColors.border,
+      borderRadius: 10,
+      padding: 12,
+      color: editorColors.text,
+      fontFamily: "Courier",
+      fontSize: 12.5,
+      minHeight: 240,
+      textAlignVertical: "top",
+      marginBottom: 12,
+    },
+    actionRow: { flexDirection: "row", gap: 8, marginBottom: 10 },
+    statusRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 10 },
+    statusText: { fontSize: 11, fontFamily: "Courier" },
+    terminal: { minHeight: 90 },
+    terminalPlaceholder: { color: colors.muted, fontSize: 12, fontFamily: "Courier" },
+    terminalLine: { fontSize: 12, fontFamily: "Courier", marginBottom: 4 },
+    rewardHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 },
+    rewardTitle: { color: colors.text, fontSize: 14, fontWeight: "600" },
+    rewardRow: { flexDirection: "row", justifyContent: "space-around" },
+    rewardStat: { alignItems: "center" },
+    rewardValue: { fontSize: 18, fontWeight: "700" },
+    rewardLabel: { color: colors.muted, fontSize: 10, marginTop: 2 },
+  });

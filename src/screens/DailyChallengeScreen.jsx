@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Flame, Zap, CheckCircle2 } from "lucide-react-native";
 import api from "../api/axios";
-import { colors } from "../theme";
+import { useTheme } from "../context/ThemeContext";
 import Card from "../components/Card";
 import PrimaryButton from "../components/PrimaryButton";
 
 export default function DailyChallengeScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => getStyles(colors), [colors]);
   const [daily, setDaily] = useState(undefined);
 
   useEffect(() => {
@@ -50,16 +52,17 @@ export default function DailyChallengeScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.void },
-  title: { color: colors.text, fontSize: 20, fontWeight: "700" },
-  subtitle: { color: colors.muted, fontSize: 13, marginTop: 2, marginBottom: 16 },
-  muted: { color: colors.muted, fontSize: 13 },
-  dailyTitle: { color: colors.text, fontSize: 16, fontWeight: "700", marginBottom: 10 },
-  metaRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 },
-  metaText: { color: colors.muted, fontSize: 12, fontFamily: "Courier" },
-  bonusRow: { flexDirection: "row", alignItems: "center", gap: 4 },
-  bonusText: { color: colors.success, fontSize: 12, fontFamily: "Courier" },
-  doneRow: { flexDirection: "row", alignItems: "center", gap: 8 },
-  doneText: { color: colors.success, fontSize: 13 },
-});
+const getStyles = (colors) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.void },
+    title: { color: colors.text, fontSize: 20, fontWeight: "700" },
+    subtitle: { color: colors.muted, fontSize: 13, marginTop: 2, marginBottom: 16 },
+    muted: { color: colors.muted, fontSize: 13 },
+    dailyTitle: { color: colors.text, fontSize: 16, fontWeight: "700", marginBottom: 10 },
+    metaRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 },
+    metaText: { color: colors.muted, fontSize: 12, fontFamily: "Courier" },
+    bonusRow: { flexDirection: "row", alignItems: "center", gap: 4 },
+    bonusText: { color: colors.success, fontSize: 12, fontFamily: "Courier" },
+    doneRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+    doneText: { color: colors.success, fontSize: 13 },
+  });

@@ -4,12 +4,14 @@ import { Flame, Coins, Bug, Award } from "lucide-react-native";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { titleForXp } from "../utils/gamification";
-import { colors } from "../theme";
+import { useTheme } from "../context/ThemeContext";
 import Card from "../components/Card";
 import PrimaryButton from "../components/PrimaryButton";
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => getStyles(colors), [colors]);
   const [submissions, setSubmissions] = useState([]);
   const [achievements, setAchievements] = useState([]);
 
@@ -41,10 +43,10 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.statsGrid}>
-        <StatCard icon={<Bug size={16} color={colors.violet} />} value={submissions.length} label="Bugs fixed" />
-        <StatCard icon={<Flame size={16} color={colors.warn} />} value={user?.streak ?? 0} label="Streak" />
-        <StatCard icon={<Coins size={16} color={colors.warn} />} value={user?.coins ?? 0} label="Coins" />
-        <StatCard icon={<Award size={16} color={colors.success} />} value={unlocked} label="Achievements" />
+        <StatCard icon={<Bug size={16} color={colors.violet} />} value={submissions.length} label="Bugs fixed" colors={colors} />
+        <StatCard icon={<Flame size={16} color={colors.warn} />} value={user?.streak ?? 0} label="Streak" colors={colors} />
+        <StatCard icon={<Coins size={16} color={colors.warn} />} value={user?.coins ?? 0} label="Coins" colors={colors} />
+        <StatCard icon={<Award size={16} color={colors.success} />} value={unlocked} label="Achievements" colors={colors} />
       </View>
 
       <View style={{ height: 20 }} />
@@ -53,7 +55,8 @@ export default function ProfileScreen() {
   );
 }
 
-function StatCard({ icon, value, label }) {
+function StatCard({ icon, value, label, colors }) {
+  const styles = getStyles(colors);
   return (
     <Card style={styles.statCard}>
       {icon}
@@ -63,16 +66,17 @@ function StatCard({ icon, value, label }) {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.void },
-  headerRow: { flexDirection: "row", alignItems: "center", gap: 14, marginBottom: 20 },
-  avatar: { width: 56, height: 56, borderRadius: 16, backgroundColor: colors.violet, alignItems: "center", justifyContent: "center" },
-  avatarText: { color: colors.void, fontSize: 20, fontWeight: "700" },
-  name: { color: colors.text, fontSize: 18, fontWeight: "700" },
-  email: { color: colors.muted, fontSize: 12, marginTop: 2 },
-  rank: { color: colors.violet, fontSize: 12, marginTop: 2 },
-  statsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
-  statCard: { width: "47%" },
-  statValue: { color: colors.text, fontSize: 18, fontWeight: "700", marginTop: 8 },
-  statLabel: { color: colors.muted, fontSize: 11, marginTop: 2 },
-});
+const getStyles = (colors) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.void },
+    headerRow: { flexDirection: "row", alignItems: "center", gap: 14, marginBottom: 20 },
+    avatar: { width: 56, height: 56, borderRadius: 16, backgroundColor: colors.violet, alignItems: "center", justifyContent: "center" },
+    avatarText: { color: colors.void, fontSize: 20, fontWeight: "700" },
+    name: { color: colors.text, fontSize: 18, fontWeight: "700" },
+    email: { color: colors.muted, fontSize: 12, marginTop: 2 },
+    rank: { color: colors.violet, fontSize: 12, marginTop: 2 },
+    statsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
+    statCard: { width: "47%" },
+    statValue: { color: colors.text, fontSize: 18, fontWeight: "700", marginTop: 8 },
+    statLabel: { color: colors.muted, fontSize: 11, marginTop: 2 },
+  });

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { Swords, Award, Bookmark, FolderGit2, Settings, ChevronRight, MoreHorizontal, Send } from "lucide-react-native";
-import { colors } from "../theme";
+import { useTheme } from "../context/ThemeContext";
 import Card from "../components/Card";
 
 const ITEMS = [
@@ -14,6 +14,9 @@ const ITEMS = [
 ];
 
 export default function MoreScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => getStyles(colors), [colors]);
+
   return (
     <ScrollView style={styles.screen} contentContainerStyle={{ padding: 16 }}>
       <View style={styles.headerRow}>
@@ -38,11 +41,12 @@ export default function MoreScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.void },
-  headerRow: { flexDirection: "row", alignItems: "center", gap: 10 },
-  title: { color: colors.text, fontSize: 20, fontWeight: "700" },
-  row: { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 16, paddingVertical: 14 },
-  rowBorder: { borderBottomWidth: 1, borderBottomColor: colors.border },
-  rowLabel: { color: colors.text, fontSize: 14, flex: 1 },
-});
+const getStyles = (colors) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.void },
+    headerRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+    title: { color: colors.text, fontSize: 20, fontWeight: "700" },
+    row: { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 16, paddingVertical: 14 },
+    rowBorder: { borderBottomWidth: 1, borderBottomColor: colors.border },
+    rowLabel: { color: colors.text, fontSize: 14, flex: 1 },
+  });

@@ -5,7 +5,8 @@ import { Play, Send, RotateCcw, Trophy, CheckCircle2, AlertTriangle, ChevronRigh
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { useSettings } from "../context/SettingsContext";
-import { colors } from "../theme";
+import { useTheme } from "../context/ThemeContext";
+import { editorColors } from "../theme";
 import Card from "../components/Card";
 import Pill from "../components/Pill";
 import PrimaryButton from "../components/PrimaryButton";
@@ -16,6 +17,8 @@ export default function ChallengeScreen({ route, navigation }) {
   const { slug } = route.params;
   const { setUser } = useAuth();
   const { settings } = useSettings();
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => getStyles(colors), [colors]);
   const saveTimer = useRef(null);
 
   const [challenge, setChallenge] = useState(null);
@@ -200,50 +203,52 @@ export default function ChallengeScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.void },
-  pillRow: { flexDirection: "row", gap: 8, marginBottom: 8 },
-  title: { color: colors.text, fontSize: 18, fontWeight: "700", marginBottom: 12 },
-  tabRow: { flexDirection: "row", backgroundColor: colors.surface2, borderRadius: 8, padding: 3, marginBottom: 10 },
-  tabBtn: { flex: 1, paddingVertical: 7, borderRadius: 6, alignItems: "center" },
-  tabBtnActive: { backgroundColor: colors.border },
-  tabText: { color: colors.muted, fontSize: 11, fontWeight: "600" },
-  tabTextActive: { color: colors.text },
-  bodyText: { color: colors.muted, fontSize: 12, lineHeight: 18, marginBottom: 4 },
-  fileLabel: { color: colors.muted, fontSize: 11, fontFamily: "Courier", marginBottom: 6 },
-  editor: {
-    backgroundColor: colors.void,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 10,
-    padding: 12,
-    color: "#D6D6E6",
-    fontFamily: "Courier",
-    minHeight: 220,
-    textAlignVertical: "top",
-    marginBottom: 12,
-  },
-  actionRow: { flexDirection: "row", gap: 8, marginBottom: 10 },
-  statusRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 10 },
-  statusText: { fontSize: 11, fontFamily: "Courier" },
-  terminal: { minHeight: 90 },
-  terminalPlaceholder: { color: "#5C5C70", fontSize: 12, fontFamily: "Courier" },
-  terminalLine: { fontSize: 12, fontFamily: "Courier", marginBottom: 4 },
-  rewardHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 },
-  rewardTitle: { color: colors.text, fontSize: 14, fontWeight: "600" },
-  rewardRow: { flexDirection: "row", justifyContent: "space-around" },
-  rewardStat: { alignItems: "center" },
-  rewardValue: { fontSize: 18, fontWeight: "700" },
-  rewardLabel: { color: colors.muted, fontSize: 10, marginTop: 2 },
-  nextBtn: {
-    marginTop: 14,
-    backgroundColor: colors.violet,
-    borderRadius: 10,
-    paddingVertical: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-  },
-  nextBtnText: { color: "#fff", fontSize: 14, fontWeight: "600" },
-});
+const getStyles = (colors) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.void },
+    pillRow: { flexDirection: "row", gap: 8, marginBottom: 8 },
+    title: { color: colors.text, fontSize: 18, fontWeight: "700", marginBottom: 12 },
+    tabRow: { flexDirection: "row", backgroundColor: colors.surface2, borderRadius: 8, padding: 3, marginBottom: 10 },
+    tabBtn: { flex: 1, paddingVertical: 7, borderRadius: 6, alignItems: "center" },
+    tabBtnActive: { backgroundColor: colors.border },
+    tabText: { color: colors.muted, fontSize: 11, fontWeight: "600" },
+    tabTextActive: { color: colors.text },
+    bodyText: { color: colors.muted, fontSize: 12, lineHeight: 18, marginBottom: 4 },
+    fileLabel: { color: colors.muted, fontSize: 11, fontFamily: "Courier", marginBottom: 6 },
+    // Editor pane always stays dark for code readability, independent of app theme.
+    editor: {
+      backgroundColor: editorColors.background,
+      borderWidth: 1,
+      borderColor: editorColors.border,
+      borderRadius: 10,
+      padding: 12,
+      color: editorColors.text,
+      fontFamily: "Courier",
+      minHeight: 220,
+      textAlignVertical: "top",
+      marginBottom: 12,
+    },
+    actionRow: { flexDirection: "row", gap: 8, marginBottom: 10 },
+    statusRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 10 },
+    statusText: { fontSize: 11, fontFamily: "Courier" },
+    terminal: { minHeight: 90 },
+    terminalPlaceholder: { color: colors.muted, fontSize: 12, fontFamily: "Courier" },
+    terminalLine: { fontSize: 12, fontFamily: "Courier", marginBottom: 4 },
+    rewardHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 },
+    rewardTitle: { color: colors.text, fontSize: 14, fontWeight: "600" },
+    rewardRow: { flexDirection: "row", justifyContent: "space-around" },
+    rewardStat: { alignItems: "center" },
+    rewardValue: { fontSize: 18, fontWeight: "700" },
+    rewardLabel: { color: colors.muted, fontSize: 10, marginTop: 2 },
+    nextBtn: {
+      marginTop: 14,
+      backgroundColor: colors.violet,
+      borderRadius: 10,
+      paddingVertical: 12,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+    },
+    nextBtnText: { color: "#fff", fontSize: 14, fontWeight: "600" },
+  });

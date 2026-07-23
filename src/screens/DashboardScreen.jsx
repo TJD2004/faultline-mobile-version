@@ -4,12 +4,14 @@ import { Flame, Coins, Bug, CheckCircle2, ChevronRight } from "lucide-react-nati
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { titleForXp, levelInfo } from "../utils/gamification";
-import { colors } from "../theme";
+import { useTheme } from "../context/ThemeContext";
 import Card from "../components/Card";
 import Pill from "../components/Pill";
 
 export default function DashboardScreen({ navigation }) {
   const { user } = useAuth();
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => getStyles(colors), [colors]);
   const [challenges, setChallenges] = useState([]);
   const [submissions, setSubmissions] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -55,9 +57,9 @@ export default function DashboardScreen({ navigation }) {
           <View style={[styles.xpBarFill, { width: `${pct}%` }]} />
         </View>
         <View style={styles.statsRow}>
-          <StatBox icon={<Bug size={16} color={colors.violet} />} value={submissions.length} label="Bugs fixed" />
-          <StatBox icon={<Flame size={16} color={colors.warn} />} value={user?.streak ?? 0} label="Streak" />
-          <StatBox icon={<Coins size={16} color={colors.warn} />} value={user?.coins ?? 0} label="Coins" />
+          <StatBox icon={<Bug size={16} color={colors.violet} />} value={submissions.length} label="Bugs fixed" colors={colors} />
+          <StatBox icon={<Flame size={16} color={colors.warn} />} value={user?.streak ?? 0} label="Streak" colors={colors} />
+          <StatBox icon={<Coins size={16} color={colors.warn} />} value={user?.coins ?? 0} label="Coins" colors={colors} />
         </View>
       </Card>
 
@@ -86,7 +88,8 @@ export default function DashboardScreen({ navigation }) {
   );
 }
 
-function StatBox({ icon, value, label }) {
+function StatBox({ icon, value, label, colors }) {
+  const styles = getStyles(colors);
   return (
     <View style={styles.statBox}>
       {icon}
@@ -96,21 +99,22 @@ function StatBox({ icon, value, label }) {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.void },
-  greeting: { color: colors.text, fontSize: 20, fontWeight: "700" },
-  subGreeting: { color: colors.muted, fontSize: 13, marginTop: 2 },
-  xpRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 6 },
-  xpLabel: { color: colors.muted, fontSize: 11 },
-  xpBarTrack: { height: 8, borderRadius: 4, backgroundColor: colors.surface2, overflow: "hidden" },
-  xpBarFill: { height: 8, borderRadius: 4, backgroundColor: colors.violet },
-  statsRow: { flexDirection: "row", gap: 10, marginTop: 14 },
-  statBox: { flex: 1, backgroundColor: colors.surface2, borderRadius: 10, padding: 10 },
-  statValue: { color: colors.text, fontSize: 16, fontWeight: "700", marginTop: 6 },
-  statLabel: { color: colors.muted, fontSize: 10, marginTop: 2 },
-  sectionTitle: { color: colors.text, fontSize: 14, fontWeight: "600", marginTop: 20, marginBottom: 10 },
-  challengeRow: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 8 },
-  challengeIcon: { width: 34, height: 34, borderRadius: 10, backgroundColor: `${colors.violet}22`, alignItems: "center", justifyContent: "center" },
-  challengeTitle: { color: colors.text, fontSize: 13, fontWeight: "500" },
-  pillRow: { flexDirection: "row", gap: 6, marginTop: 6 },
-});
+const getStyles = (colors) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.void },
+    greeting: { color: colors.text, fontSize: 20, fontWeight: "700" },
+    subGreeting: { color: colors.muted, fontSize: 13, marginTop: 2 },
+    xpRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 6 },
+    xpLabel: { color: colors.muted, fontSize: 11 },
+    xpBarTrack: { height: 8, borderRadius: 4, backgroundColor: colors.surface2, overflow: "hidden" },
+    xpBarFill: { height: 8, borderRadius: 4, backgroundColor: colors.violet },
+    statsRow: { flexDirection: "row", gap: 10, marginTop: 14 },
+    statBox: { flex: 1, backgroundColor: colors.surface2, borderRadius: 10, padding: 10 },
+    statValue: { color: colors.text, fontSize: 16, fontWeight: "700", marginTop: 6 },
+    statLabel: { color: colors.muted, fontSize: 10, marginTop: 2 },
+    sectionTitle: { color: colors.text, fontSize: 14, fontWeight: "600", marginTop: 20, marginBottom: 10 },
+    challengeRow: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 8 },
+    challengeIcon: { width: 34, height: 34, borderRadius: 10, backgroundColor: `${colors.violet}22`, alignItems: "center", justifyContent: "center" },
+    challengeTitle: { color: colors.text, fontSize: 13, fontWeight: "500" },
+    pillRow: { flexDirection: "row", gap: 6, marginTop: 6 },
+  });

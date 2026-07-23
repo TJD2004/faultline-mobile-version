@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet, Pressable } from "react-native";
 import { FolderGit2, Star, Coins, ChevronRight } from "lucide-react-native";
 import api from "../api/axios";
-import { colors } from "../theme";
+import { useTheme } from "../context/ThemeContext";
 import Card from "../components/Card";
 import Pill from "../components/Pill";
 
 export default function ProjectListScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => getStyles(colors), [colors]);
   const [projects, setProjects] = useState(null);
 
   useEffect(() => {
@@ -54,15 +56,16 @@ export default function ProjectListScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.void },
-  title: { color: colors.text, fontSize: 20, fontWeight: "700" },
-  subtitle: { color: colors.muted, fontSize: 12, marginTop: 2 },
-  muted: { color: colors.muted, fontSize: 13, padding: 16 },
-  row: { flexDirection: "row", alignItems: "center", gap: 12 },
-  iconBox: { width: 36, height: 36, borderRadius: 10, backgroundColor: `${colors.violet}22`, alignItems: "center", justifyContent: "center" },
-  rowTitle: { color: colors.text, fontSize: 13, fontWeight: "500" },
-  metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 6, flexWrap: "wrap" },
-  metaItem: { flexDirection: "row", alignItems: "center", gap: 3 },
-  metaText: { color: colors.warn, fontSize: 11, fontFamily: "Courier" },
-});
+const getStyles = (colors) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.void },
+    title: { color: colors.text, fontSize: 20, fontWeight: "700" },
+    subtitle: { color: colors.muted, fontSize: 12, marginTop: 2 },
+    muted: { color: colors.muted, fontSize: 13, padding: 16 },
+    row: { flexDirection: "row", alignItems: "center", gap: 12 },
+    iconBox: { width: 36, height: 36, borderRadius: 10, backgroundColor: `${colors.violet}22`, alignItems: "center", justifyContent: "center" },
+    rowTitle: { color: colors.text, fontSize: 13, fontWeight: "500" },
+    metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 6, flexWrap: "wrap" },
+    metaItem: { flexDirection: "row", alignItems: "center", gap: 3 },
+    metaText: { color: colors.warn, fontSize: 11, fontFamily: "Courier" },
+  });

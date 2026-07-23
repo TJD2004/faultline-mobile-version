@@ -8,5 +8,3 @@ web-build/
 *.key
 *.mobileprovision
 .env
-.env.*
-

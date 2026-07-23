@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { CheckCircle2 } from "lucide-react-native";
 import api from "../api/axios";
-import { colors } from "../theme";
+import { useTheme } from "../context/ThemeContext";
 import Card from "../components/Card";
 import Pill from "../components/Pill";
 
 export default function SubmissionsScreen() {
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => getStyles(colors), [colors]);
   const [submissions, setSubmissions] = useState(null);
 
   useEffect(() => {
@@ -48,15 +50,16 @@ export default function SubmissionsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.void },
-  title: { color: colors.text, fontSize: 20, fontWeight: "700" },
-  subtitle: { color: colors.muted, fontSize: 12, marginTop: 2 },
-  muted: { color: colors.muted, fontSize: 13, padding: 16 },
-  row: { flexDirection: "row", alignItems: "center", gap: 10 },
-  rowTitle: { color: colors.text, fontSize: 13, fontWeight: "500" },
-  metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 6, flexWrap: "wrap" },
-  metaText: { color: "#5C5C70", fontSize: 10, fontFamily: "Courier" },
-  xpText: { color: colors.violet, fontSize: 12, fontFamily: "Courier" },
-  dateText: { color: "#5C5C70", fontSize: 10, marginTop: 2 },
-});
+const getStyles = (colors) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.void },
+    title: { color: colors.text, fontSize: 20, fontWeight: "700" },
+    subtitle: { color: colors.muted, fontSize: 12, marginTop: 2 },
+    muted: { color: colors.muted, fontSize: 13, padding: 16 },
+    row: { flexDirection: "row", alignItems: "center", gap: 10 },
+    rowTitle: { color: colors.text, fontSize: 13, fontWeight: "500" },
+    metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 6, flexWrap: "wrap" },
+    metaText: { color: colors.muted, fontSize: 10, fontFamily: "Courier" },
+    xpText: { color: colors.violet, fontSize: 12, fontFamily: "Courier" },
+    dateText: { color: colors.muted, fontSize: 10, marginTop: 2 },
+  });

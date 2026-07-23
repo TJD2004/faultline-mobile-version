@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet, Pressable, ScrollView } from "react-native";
 import { Star, Coins, CheckCircle2, Bookmark, BookmarkCheck } from "lucide-react-native";
 import api from "../api/axios";
-import { colors } from "../theme";
+import { useTheme } from "../context/ThemeContext";
 import Card from "../components/Card";
 import Pill from "../components/Pill";
 
 export default function PracticeScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => getStyles(colors), [colors]);
   const [challenges, setChallenges] = useState([]);
   const [solvedSlugs, setSolvedSlugs] = useState(new Set());
   const [bookmarkedSlugs, setBookmarkedSlugs] = useState(new Set());
@@ -41,14 +43,24 @@ export default function PracticeScreen({ navigation }) {
         <Text style={styles.subtitle}>Pick a bug. Read the report. Fix it for real.</Text>
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow} contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.filterRow}
+        contentContainerStyle={styles.filterRowContent}
+      >
         {langs.map((l) => (
           <Pressable key={l} onPress={() => setLang(l)} style={[styles.filterChip, lang === l && styles.filterChipActive]}>
             <Text style={[styles.filterChipText, lang === l && styles.filterChipTextActive]}>{l}</Text>
           </Pressable>
         ))}
       </ScrollView>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow} contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.filterRow}
+        contentContainerStyle={styles.filterRowContent}
+      >
         {diffs.map((d) => (
           <Pressable key={d} onPress={() => setDiff(d)} style={[styles.filterChip, diff === d && styles.filterChipActive]}>
             <Text style={[styles.filterChipText, diff === d && styles.filterChipTextActive]}>{d}</Text>
@@ -98,20 +110,27 @@ export default function PracticeScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.void },
-  title: { color: colors.text, fontSize: 20, fontWeight: "700" },
-  subtitle: { color: colors.muted, fontSize: 13, marginTop: 2, marginBottom: 10 },
-  filterRow: { flexGrow: 0, marginBottom: 8 },
-  filterChip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, backgroundColor: colors.surface2, borderWidth: 1, borderColor: colors.border },
-  filterChipActive: { backgroundColor: colors.violet, borderColor: colors.violet },
-  filterChipText: { color: colors.muted, fontSize: 12, fontFamily: "Courier" },
-  filterChipTextActive: { color: "#fff" },
-  cardTopRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
-  cardTop: { flexDirection: "row", gap: 8 },
-  cardTitleRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 10 },
-  cardTitle: { color: colors.text, fontSize: 14, fontWeight: "500", flex: 1 },
-  cardMetaRow: { flexDirection: "row", gap: 16 },
-  metaItem: { flexDirection: "row", alignItems: "center", gap: 4 },
-  metaText: { color: colors.muted, fontSize: 11, fontFamily: "Courier" },
-});
+const getStyles = (colors) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.void },
+    title: { color: colors.text, fontSize: 20, fontWeight: "700" },
+    subtitle: { color: colors.muted, fontSize: 13, marginTop: 2, marginBottom: 10 },
+    // Fixed height + centered items: a horizontal ScrollView with no explicit
+    // height can collapse to 0 on first layout pass (most visible on Android /
+    // Fabric), which reads as "chips are hidden until I tap one" — tapping
+    // triggers a re-render/re-layout that happens to fix it. A fixed height
+    // removes the reliance on that intrinsic-content measurement entirely.
+    filterRow: { flexGrow: 0, height: 40, marginBottom: 8 },
+    filterRowContent: { paddingHorizontal: 16, gap: 8, alignItems: "center" },
+    filterChip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, backgroundColor: colors.surface2, borderWidth: 1, borderColor: colors.border },
+    filterChipActive: { backgroundColor: colors.violet, borderColor: colors.violet },
+    filterChipText: { color: colors.muted, fontSize: 12, fontFamily: "Courier" },
+    filterChipTextActive: { color: "#fff" },
+    cardTopRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
+    cardTop: { flexDirection: "row", gap: 8 },
+    cardTitleRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 10 },
+    cardTitle: { color: colors.text, fontSize: 14, fontWeight: "500", flex: 1 },
+    cardMetaRow: { flexDirection: "row", gap: 16 },
+    metaItem: { flexDirection: "row", alignItems: "center", gap: 4 },
+    metaText: { color: colors.muted, fontSize: 11, fontFamily: "Courier" },
+  });

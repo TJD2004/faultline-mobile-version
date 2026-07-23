@@ -2,16 +2,19 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet, Pressable } from "react-native";
 import { Clock, Trophy } from "lucide-react-native";
 import api from "../api/axios";
-import { colors } from "../theme";
+import { useTheme } from "../context/ThemeContext";
 import Card from "../components/Card";
 
-const STATUS_STYLE = {
+const getStatusStyle = (colors) => ({
   active: { color: colors.success, label: "Active now" },
   upcoming: { color: colors.warn, label: "Upcoming" },
   ended: { color: colors.muted, label: "Ended" },
-};
+});
 
 export default function ContestListScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => getStyles(colors), [colors]);
+  const statusStyle = React.useMemo(() => getStatusStyle(colors), [colors]);
   const [contests, setContests] = useState(null);
 
   useEffect(() => {
@@ -36,7 +39,7 @@ export default function ContestListScreen({ navigation }) {
         keyExtractor={(c) => c.slug}
         contentContainerStyle={{ padding: 16, gap: 10 }}
         renderItem={({ item }) => {
-          const style = STATUS_STYLE[item.status] || STATUS_STYLE.ended;
+          const style = statusStyle[item.status] || statusStyle.ended;
           return (
             <Pressable onPress={() => navigation.navigate("ContestDetail", { slug: item.slug })}>
               <Card>
@@ -60,18 +63,19 @@ export default function ContestListScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.void },
-  headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", padding: 16, paddingBottom: 4 },
-  title: { color: colors.text, fontSize: 20, fontWeight: "700" },
-  subtitle: { color: colors.muted, fontSize: 12, marginTop: 2 },
-  rankingBtn: { flexDirection: "row", alignItems: "center", gap: 5, backgroundColor: `${colors.violet}22`, borderWidth: 1, borderColor: `${colors.violet}55`, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6 },
-  rankingBtnText: { color: colors.violet, fontSize: 11, fontWeight: "600" },
-  cardTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 6 },
-  cardTitle: { color: colors.text, fontSize: 15, fontWeight: "700", flex: 1, marginRight: 8 },
-  statusPill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, borderWidth: 1 },
-  statusText: { fontSize: 10, fontFamily: "Courier" },
-  cardDesc: { color: colors.muted, fontSize: 12, marginBottom: 8 },
-  timeRow: { flexDirection: "row", alignItems: "center", gap: 5 },
-  timeText: { color: colors.muted, fontSize: 11, fontFamily: "Courier" },
-});
+const getStyles = (colors) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.void },
+    headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", padding: 16, paddingBottom: 4 },
+    title: { color: colors.text, fontSize: 20, fontWeight: "700" },
+    subtitle: { color: colors.muted, fontSize: 12, marginTop: 2 },
+    rankingBtn: { flexDirection: "row", alignItems: "center", gap: 5, backgroundColor: `${colors.violet}22`, borderWidth: 1, borderColor: `${colors.violet}55`, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6 },
+    rankingBtnText: { color: colors.violet, fontSize: 11, fontWeight: "600" },
+    cardTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 6 },
+    cardTitle: { color: colors.text, fontSize: 15, fontWeight: "700", flex: 1, marginRight: 8 },
+    statusPill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, borderWidth: 1 },
+    statusText: { fontSize: 10, fontFamily: "Courier" },
+    cardDesc: { color: colors.muted, fontSize: 12, marginBottom: 8 },
+    timeRow: { flexDirection: "row", alignItems: "center", gap: 5 },
+    timeText: { color: colors.muted, fontSize: 11, fontFamily: "Courier" },
+  });

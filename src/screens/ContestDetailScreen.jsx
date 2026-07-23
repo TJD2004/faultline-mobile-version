@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
 import { CheckCircle2, ChevronRight, Crown } from "lucide-react-native";
 import api from "../api/axios";
-import { colors } from "../theme";
+import { useTheme } from "../context/ThemeContext";
 import Card from "../components/Card";
 import Pill from "../components/Pill";
 
 export default function ContestDetailScreen({ route, navigation }) {
   const { slug } = route.params;
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => getStyles(colors), [colors]);
   const [data, setData] = useState(null);
   const [leaderboard, setLeaderboard] = useState(null);
   const [tab, setTab] = useState("challenges");
@@ -79,23 +81,24 @@ export default function ContestDetailScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.void, padding: 16 },
-  muted: { color: colors.muted, fontSize: 13 },
-  title: { color: colors.text, fontSize: 18, fontWeight: "700" },
-  subtitle: { color: colors.muted, fontSize: 12, marginTop: 4, marginBottom: 14 },
-  tabRow: { flexDirection: "row", backgroundColor: colors.surface2, borderRadius: 8, padding: 3, marginBottom: 12, alignSelf: "flex-start" },
-  tabBtn: { paddingHorizontal: 16, paddingVertical: 7, borderRadius: 6 },
-  tabBtnActive: { backgroundColor: colors.border },
-  tabText: { color: colors.muted, fontSize: 12, fontWeight: "600" },
-  tabTextActive: { color: colors.text },
-  row: { flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 8 },
-  rowTitle: { color: colors.text, fontSize: 13, fontWeight: "500" },
-  emptyDot: { width: 16, height: 16, borderRadius: 8, borderWidth: 1, borderColor: colors.border },
-  lbRow: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 16, paddingVertical: 12 },
-  lbBorder: { borderBottomWidth: 1, borderBottomColor: colors.border },
-  rankBox: { width: 22, alignItems: "center" },
-  rankText: { color: colors.muted, fontSize: 12, fontFamily: "Courier" },
-  lbName: { color: colors.text, fontSize: 13, flex: 1 },
-  lbXp: { color: colors.text, fontSize: 12, fontFamily: "Courier" },
-});
+const getStyles = (colors) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.void, padding: 16 },
+    muted: { color: colors.muted, fontSize: 13 },
+    title: { color: colors.text, fontSize: 18, fontWeight: "700" },
+    subtitle: { color: colors.muted, fontSize: 12, marginTop: 4, marginBottom: 14 },
+    tabRow: { flexDirection: "row", backgroundColor: colors.surface2, borderRadius: 8, padding: 3, marginBottom: 12, alignSelf: "flex-start" },
+    tabBtn: { paddingHorizontal: 16, paddingVertical: 7, borderRadius: 6 },
+    tabBtnActive: { backgroundColor: colors.border },
+    tabText: { color: colors.muted, fontSize: 12, fontWeight: "600" },
+    tabTextActive: { color: colors.text },
+    row: { flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 8 },
+    rowTitle: { color: colors.text, fontSize: 13, fontWeight: "500" },
+    emptyDot: { width: 16, height: 16, borderRadius: 8, borderWidth: 1, borderColor: colors.border },
+    lbRow: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 16, paddingVertical: 12 },
+    lbBorder: { borderBottomWidth: 1, borderBottomColor: colors.border },
+    rankBox: { width: 22, alignItems: "center" },
+    rankText: { color: colors.muted, fontSize: 12, fontFamily: "Courier" },
+    lbName: { color: colors.text, fontSize: 13, flex: 1 },
+    lbXp: { color: colors.text, fontSize: 12, fontFamily: "Courier" },
+  });
