@@ -70,7 +70,8 @@ function MainStack() {
 
 export default function RootNavigator() {
   const { user, loading } = useAuth();
-  const { colors } = useTheme();
+  const { colors, isLight } = useTheme();
+  const logoSource = isLight ? require("../../assets/logo-full-light.png") : require("../../assets/logo-full.png");
 
   // Once auth state is resolved, the app is "ready": drop the native splash
   // screen (visible on standalone/EAS builds) and hand off to the real UI.
@@ -83,7 +84,7 @@ export default function RootNavigator() {
   if (loading) {
     return (
       <View style={[styles.loadingScreen, { backgroundColor: colors.void }]}>
-        <Image source={require("../../assets/logo-full.png")} style={styles.loadingLogo} resizeMode="contain" />
+        <Image source={logoSource} style={styles.loadingLogo} resizeMode="contain" />
         <ActivityIndicator color={colors.violet} size="large" style={styles.loadingSpinner} />
       </View>
     );

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, Text, TextInput, ScrollView, StyleSheet, Pressable, ActivityIndicator } from "react-native";
+import { View, Text, TextInput, ScrollView, StyleSheet, Pressable, ActivityIndicator, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Play, Send, RotateCcw, Trophy, CheckCircle2, AlertTriangle, ChevronRight } from "lucide-react-native";
+import { Play, Send, RotateCcw, Trophy, CheckCircle2, AlertTriangle, ChevronRight, Lock, Database } from "lucide-react-native";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { useSettings } from "../context/SettingsContext";
@@ -31,6 +31,9 @@ export default function ChallengeScreen({ route, navigation }) {
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
   const [nextSlug, setNextSlug] = useState(null);
+  const [solution, setSolution] = useState(null);
+  const [solutionLoading, setSolutionLoading] = useState(false);
+  const [usedSolution, setUsedSolution] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -50,6 +53,8 @@ export default function ChallengeScreen({ route, navigation }) {
     setStatus("idle");
     setAttempts(0);
     setReward(null);
+    setSolution(null);
+    setUsedSolution(false);
   }, [slug]);
 
   useEffect(() => {
@@ -85,8 +90,32 @@ export default function ChallengeScreen({ route, navigation }) {
     AsyncStorage.removeItem(draftKey(slug));
   };
 
+  const revealSolution = () => {
+    Alert.alert(
+      "Reveal solution?",
+      "This drops the reward for this challenge to 30% XP and coins, and skips any daily bonus. Your progress isn't affected either way.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Reveal",
+          style: "destructive",
+          onPress: async () => {
+            setSolutionLoading(true);
+            try {
+              const { data } = await api.get(`/challenges/${slug}/solution`);
+              setSolution(data.solution);
+              setUsedSolution(true);
+            } finally {
+              setSolutionLoading(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const submit = async () => {
-    const { data } = await api.post(`/challenges/${slug}/submit`, { code, attempts, usedSolution: false });
+    const { data } = await api.post(`/challenges/${slug}/submit`, { code, attempts, usedSolution });
     setReward(data);
     AsyncStorage.removeItem(draftKey(slug));
     setUser((prev) => (prev ? { ...prev, xp: prev.xp + data.xpEarned, coins: prev.coins + data.coinsEarned } : prev));
@@ -109,9 +138,9 @@ export default function ChallengeScreen({ route, navigation }) {
       <Text style={styles.title}>{challenge.title}</Text>
 
       <View style={styles.tabRow}>
-        {["report", "hints", "objective"].map((t) => (
+        {["report", "hints", "objective", ...(challenge.schema ? ["schema"] : []), "solution"].map((t) => (
           <Pressable key={t} onPress={() => setTab(t)} style={[styles.tabBtn, tab === t && styles.tabBtnActive]}>
-            <Text style={[styles.tabText, tab === t && styles.tabTextActive]}>
+            <Text style={[styles.tabText, tab === t && styles.tabTextActive]} numberOfLines={1}>
               {t === "report" ? "Bug Report" : t[0].toUpperCase() + t.slice(1)}
             </Text>
           </Pressable>
@@ -122,7 +151,70 @@ export default function ChallengeScreen({ route, navigation }) {
         {tab === "report" && <Text style={styles.bodyText}>{challenge.bugReport}</Text>}
         {tab === "hints" && challenge.hints.map((h, i) => <Text key={i} style={styles.bodyText}>• {h}</Text>)}
         {tab === "objective" && <Text style={styles.bodyText}>{challenge.objective}</Text>}
+
+        {tab === "schema" && challenge.schema && (
+          <View>
+            <View style={styles.schemaHeaderRow}>
+              <Database size={13} color={colors.cyan} />
+              <Text style={styles.schemaDialect}>{challenge.schema.dialect} schema</Text>
+            </View>
+            {challenge.schema.tables.map((t) => (
+              <View key={t.name} style={{ marginTop: 10 }}>
+                <Text style={styles.schemaTableName}>{t.name}</Text>
+                <View style={styles.schemaCreateBlock}>
+                  <Text style={styles.schemaCreateText}>{t.create}</Text>
+                </View>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
+                  <View>
+                    <View style={styles.schemaRow}>
+                      {t.columns.map((c) => (
+                        <Text key={c} style={styles.schemaHeaderCell}>{c}</Text>
+                      ))}
+                    </View>
+                    {t.rows.map((r, ri) => (
+                      <View key={ri} style={[styles.schemaRow, ri % 2 === 1 && { backgroundColor: colors.surface2 }]}>
+                        {r.map((cell, ci) => (
+                          <Text key={ci} style={styles.schemaCell}>{String(cell)}</Text>
+                        ))}
+                      </View>
+                    ))}
+                  </View>
+                </ScrollView>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {tab === "solution" &&
+          (solution ? (
+            <View style={styles.solutionBlock}>
+              <Text style={styles.solutionText}>{solution}</Text>
+            </View>
+          ) : (
+            <View>
+              <View style={styles.solutionWarnRow}>
+                <Lock size={14} color={colors.warn} />
+                <Text style={styles.bodyText}>
+                  Revealing the solution drops this challenge's reward to 30% XP and coins, and skips any daily bonus.
+                </Text>
+              </View>
+              <Pressable onPress={revealSolution} style={styles.revealBtn} disabled={solutionLoading}>
+                {solutionLoading ? (
+                  <ActivityIndicator color={colors.text} size="small" />
+                ) : (
+                  <Text style={styles.revealBtnText}>Reveal Solution</Text>
+                )}
+              </Pressable>
+            </View>
+          ))}
       </Card>
+
+      {usedSolution && (
+        <View style={styles.usedSolutionBanner}>
+          <Lock size={12} color={colors.warn} />
+          <Text style={styles.usedSolutionText}>Solution revealed — this submission will earn a reduced reward.</Text>
+        </View>
+      )}
 
       <Text style={styles.fileLabel}>{challenge.fileName}</Text>
       <TextInput
@@ -214,6 +306,67 @@ const getStyles = (colors) =>
     tabText: { color: colors.muted, fontSize: 11, fontWeight: "600" },
     tabTextActive: { color: colors.text },
     bodyText: { color: colors.muted, fontSize: 12, lineHeight: 18, marginBottom: 4 },
+    schemaHeaderRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 2 },
+    schemaDialect: { color: colors.cyan, fontSize: 11, fontFamily: "Courier", fontWeight: "600" },
+    schemaTableName: { color: colors.text, fontSize: 12, fontWeight: "700", marginBottom: 6 },
+    schemaCreateBlock: {
+      backgroundColor: editorColors.background,
+      borderWidth: 1,
+      borderColor: editorColors.border,
+      borderRadius: 8,
+      padding: 10,
+    },
+    schemaCreateText: { color: editorColors.text, fontFamily: "Courier", fontSize: 11.5, lineHeight: 17 },
+    schemaRow: { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: colors.border },
+    schemaHeaderCell: {
+      minWidth: 110,
+      paddingVertical: 7,
+      paddingHorizontal: 10,
+      color: colors.muted,
+      fontSize: 10.5,
+      fontFamily: "Courier",
+      fontWeight: "700",
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    schemaCell: {
+      minWidth: 110,
+      paddingVertical: 7,
+      paddingHorizontal: 10,
+      color: colors.text,
+      fontSize: 11,
+      fontFamily: "Courier",
+    },
+    solutionWarnRow: { flexDirection: "row", alignItems: "flex-start", gap: 8, marginBottom: 12 },
+    revealBtn: {
+      backgroundColor: colors.surface2,
+      borderWidth: 1,
+      borderColor: colors.warn,
+      borderRadius: 8,
+      paddingVertical: 10,
+      alignItems: "center",
+    },
+    revealBtnText: { color: colors.warn, fontSize: 12, fontWeight: "600" },
+    solutionBlock: {
+      backgroundColor: editorColors.background,
+      borderWidth: 1,
+      borderColor: editorColors.border,
+      borderRadius: 8,
+      padding: 12,
+    },
+    solutionText: { color: editorColors.text, fontFamily: "Courier", fontSize: 12, lineHeight: 18 },
+    usedSolutionBanner: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: `${colors.warn}18`,
+      borderWidth: 1,
+      borderColor: `${colors.warn}55`,
+      borderRadius: 8,
+      padding: 10,
+      marginBottom: 14,
+    },
+    usedSolutionText: { color: colors.warn, fontSize: 11, flex: 1 },
     fileLabel: { color: colors.muted, fontSize: 11, fontFamily: "Courier", marginBottom: 6 },
     // Editor pane always stays dark for code readability, independent of app theme.
     editor: {

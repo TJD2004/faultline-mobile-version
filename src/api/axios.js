@@ -1,9 +1,9 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
-export const TOKEN_KEY = "faultline_token";
-
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+export const TOKEN_KEY = "faultline_token";
 
 const api = axios.create({ baseURL: API_URL });
 

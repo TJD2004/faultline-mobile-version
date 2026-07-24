@@ -6,8 +6,9 @@ import PrimaryButton from "../components/PrimaryButton";
 
 export default function SignupScreen({ navigation }) {
   const { signup, loginWithGoogle } = useAuth();
-  const { colors } = useTheme();
+  const { colors, isLight } = useTheme();
   const styles = React.useMemo(() => getStyles(colors), [colors]);
+  const logoSource = isLight ? require("../../assets/logo-full-light.png") : require("../../assets/logo-full.png");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,7 +43,7 @@ export default function SignupScreen({ navigation }) {
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.flex}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Image source={require("../../assets/logo-full.png")} style={styles.logo} resizeMode="contain" />
+        <Image source={logoSource} style={styles.logo} resizeMode="contain" />
 
         <Text style={styles.title}>Create your account</Text>
         <Text style={styles.subtitle}>Start fixing real bugs today.</Text>
